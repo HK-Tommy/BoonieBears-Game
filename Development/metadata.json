@@ -1,0 +1,6 @@
+{
+  "name": "熊出沒萌友大合成 - Suika Merge Game",
+  "description": "精美重製版合成大遊戲，支援1至12檔角色全隨機掉落、真實物理碰撞、連擊特效與復活幣機制！",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
