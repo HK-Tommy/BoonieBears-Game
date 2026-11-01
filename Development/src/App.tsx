@@ -104,8 +104,8 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f7f5f0] text-stone-800">
-      {/* Top Header */}
+    <div className="min-h-screen flex flex-col bg-[#f7f5f0] text-stone-800 antialiased overflow-x-hidden selection:bg-amber-200">
+      {/* Responsive Top Header */}
       <GameHeader
         score={score}
         bestScore={bestScore}
@@ -116,8 +116,8 @@ export default function App() {
         onRestart={handleRestart}
       />
 
-      {/* Main Play Area */}
-      <main className="flex-1 w-full max-w-5xl mx-auto px-4 py-2 flex flex-col lg:flex-row items-center lg:items-start justify-center gap-6">
+      {/* Main Play Area: Mobile, iPad & Desktop optimized */}
+      <main className="flex-1 w-full max-w-5xl mx-auto px-2 sm:px-4 py-1 sm:py-2 flex flex-col lg:flex-row items-center lg:items-start justify-center gap-4 lg:gap-6">
         {/* Left / Center: Interactive Game Board */}
         <div className="w-full flex justify-center">
           <GameBoard
@@ -131,17 +131,26 @@ export default function App() {
           />
         </div>
 
-        {/* Right / Sidebar Controls & Info */}
+        {/* Right / Sidebar: Status & Evolution */}
         <Sidebar
           score={score}
           bestScore={bestScore}
+          maxTierAchieved={maxTierAchieved}
           onOpenEvolutionGuide={() => setIsEvolutionGuideOpen(true)}
         />
       </main>
 
       {/* Footer */}
-      <footer className="w-full py-4 text-center text-xs text-stone-500 border-t border-stone-200 mt-6">
-        熊出沒 · 萌友大合成 © 2026 · Developed by <a href="https://hk-tommy.github.io/Profile/">湯米Tommy</a>
+      <footer className="w-full py-3 sm:py-4 text-center text-xs text-stone-500 border-t border-stone-200/80 mt-2 sm:mt-4 shrink-0">
+        熊出沒 · 萌友大合成 © 2026 · Developed by{' '}
+        <a
+          href="https://hk-tommy.github.io/Profile/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-amber-800 font-semibold hover:underline"
+        >
+          湯米Tommy
+        </a>
       </footer>
 
       {/* Modals */}
