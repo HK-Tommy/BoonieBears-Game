@@ -66,8 +66,8 @@ export const CHARACTER_TIERS: CharacterTier[] = [
   },
   {
     tier: 7,
-    name: '毛毛',
-    title: '忠誠小猴衛士',
+    name: '蘿蔔頭',
+    title: '擅長挖洞的地鼠',
     image: formatAssetPath('assets/aistudio/7_a39fc9a1.png'),
     radius: 72,
     score: 128,
@@ -76,8 +76,8 @@ export const CHARACTER_TIERS: CharacterTier[] = [
   },
   {
     tier: 8,
-    name: '吉吉國王',
-    title: '森林叢林之王',
+    name: '毛毛',
+    title: '對吉吉言聽計從',
     image: formatAssetPath('assets/aistudio/8_ef433ccf.png'),
     radius: 84,
     score: 256,
@@ -86,8 +86,8 @@ export const CHARACTER_TIERS: CharacterTier[] = [
   },
   {
     tier: 9,
-    name: '熊大',
-    title: '智勇大棕熊',
+    name: '吉吉國王',
+    title: '自稱「本王」的森林自封猴王',
     image: formatAssetPath('assets/aistudio/9_20241c00.png'),
     radius: 97,
     score: 512,

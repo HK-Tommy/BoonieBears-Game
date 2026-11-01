@@ -227,12 +227,13 @@ export const GameBoard: React.FC<GameBoardProps> = ({
     const maxX = BOARD_WIDTH - WALL_THICKNESS - tierData.radius - 2;
     const clampedX = Math.max(minX, Math.min(maxX, aimXRef.current));
 
-    // Create physics circle
+    // Create physics circle with smooth roll friction
     const ball = Matter.Bodies.circle(clampedX, DROP_Y, tierData.radius, {
-      restitution: 0.22,
-      friction: 0.12,
-      frictionAir: 0.003,
-      density: 0.0012,
+      restitution: 0.14,
+      friction: 0.001,
+      frictionStatic: 0.001,
+      frictionAir: 0.0006,
+      density: 0.001,
       label: 'character_ball',
     });
 
@@ -277,9 +278,10 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   // (Empty dependency array ensures the world and existing characters are NEVER cleared mid-game!)
   useEffect(() => {
     const engine = Matter.Engine.create({
-      gravity: { x: 0, y: 1.18 },
-      positionIterations: 10,
-      velocityIterations: 10,
+      gravity: { x: 0, y: 1.45 },
+      positionIterations: 8,
+      velocityIterations: 8,
+      enableSleeping: false,
     });
     const world = engine.world;
     engineRef.current = engine;
@@ -293,8 +295,9 @@ export const GameBoard: React.FC<GameBoardProps> = ({
       BOUNDARY_THICKNESS,
       {
         isStatic: true,
-        friction: 0.6,
-        restitution: 0.12,
+        friction: 0.04,
+        frictionStatic: 0.04,
+        restitution: 0.08,
         label: 'boundary_ground',
       }
     );
@@ -306,8 +309,9 @@ export const GameBoard: React.FC<GameBoardProps> = ({
       BOARD_HEIGHT * 2,
       {
         isStatic: true,
-        friction: 0.35,
-        restitution: 0.15,
+        friction: 0.001,
+        frictionStatic: 0.001,
+        restitution: 0.1,
         label: 'boundary_left',
       }
     );
@@ -319,8 +323,9 @@ export const GameBoard: React.FC<GameBoardProps> = ({
       BOARD_HEIGHT * 2,
       {
         isStatic: true,
-        friction: 0.35,
-        restitution: 0.15,
+        friction: 0.001,
+        frictionStatic: 0.001,
+        restitution: 0.1,
         label: 'boundary_right',
       }
     );
@@ -409,10 +414,11 @@ export const GameBoard: React.FC<GameBoardProps> = ({
               // Spawn ONLY the single next-tier body at collision midpoint
               const newTierConfig = CHARACTER_TIERS[tier];
               const newBody = Matter.Bodies.circle(midX, midY, newTierConfig.radius, {
-                restitution: 0.18,
-                friction: 0.15,
-                frictionAir: 0.003,
-                density: 0.0012,
+                restitution: 0.12,
+                friction: 0.001,
+                frictionStatic: 0.001,
+                frictionAir: 0.0006,
+                density: 0.001,
                 label: 'character_ball',
               });
 
@@ -479,6 +485,25 @@ export const GameBoard: React.FC<GameBoardProps> = ({
       // Update aim entrance animation progress
       if (aimEntranceProgressRef.current < 1) {
         aimEntranceProgressRef.current = Math.min(1, aimEntranceProgressRef.current + dt * 4.2);
+      }
+
+      // Dynamic crevice-seeking slide mechanism:
+      // Prevents characters from bridging or jamming in mid-air when many characters populate the field
+      if (worldRef.current) {
+        const bodies = Matter.Composite.allBodies(worldRef.current);
+        for (let i = 0; i < bodies.length; i++) {
+          const body = bodies[i];
+          if (body.isStatic) continue;
+
+          // If perched above floor and moving slowly vertically, apply tiny lateral crevice-seeking force
+          if (body.position.y < BOARD_HEIGHT - 45 && Math.abs(body.velocity.y) < 0.35) {
+            const lateralFactor = Math.sin(body.id * 17 + currentTime * 0.004);
+            Matter.Body.applyForce(body, body.position, {
+              x: lateralFactor * 0.00015 * body.mass,
+              y: 0.00006 * body.mass,
+            });
+          }
+        }
       }
 
       // Update Matter physics
@@ -632,7 +657,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
           ctx.shadowBlur = Math.max(4, radius * 0.15);
           ctx.shadowOffsetY = Math.max(2, radius * 0.1);
 
-          if (img && img.complete && img.naturalWidth > 0 && tierNum !== 6) {
+          if (img && img.complete && img.naturalWidth > 0) {
             const aspect = img.naturalWidth / img.naturalHeight;
             let drawW = radius * 2.25;
             let drawH = drawW / aspect;
@@ -689,7 +714,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
         ctx.shadowBlur = 8;
         ctx.shadowOffsetY = 4;
 
-        if (img && img.complete && img.naturalWidth > 0 && curTier.tier !== 6) {
+        if (img && img.complete && img.naturalWidth > 0) {
           const aspect = img.naturalWidth / img.naturalHeight;
           let drawW = curTier.radius * 2.25 * entranceScale;
           let drawH = drawW / aspect;
@@ -852,16 +877,14 @@ export const GameBoard: React.FC<GameBoardProps> = ({
           className="animate-spring-pop absolute top-2.5 right-3.5 flex items-center gap-1.5 bg-amber-50/95 backdrop-blur-xs px-2.5 py-1 rounded-full shadow-sm border border-amber-300 pointer-events-none text-xs font-semibold text-amber-950"
         >
           <span>下一個:</span>
-          {nextTierUI.tier !== 6 ? (
-            <img
-              src={nextTierUI.image}
-              alt={nextTierUI.name}
-              className="w-5 h-5 object-contain"
-              onError={(e) => {
-                e.currentTarget.style.display = 'none';
-              }}
-            />
-          ) : null}
+          <img
+            src={nextTierUI.image}
+            alt={nextTierUI.name}
+            className="w-5 h-5 object-contain"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+            }}
+          />
           <span className="text-sm leading-none">{nextTierUI.emoji}</span>
         </div>
 

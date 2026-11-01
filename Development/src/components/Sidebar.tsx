@@ -75,17 +75,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     }`}
                     title={`第${char.tier}階: ${char.name} (${isUnlocked ? '已解鎖可掉落' : '尚未解鎖'})`}
                   >
-                    {char.tier !== 6 ? (
-                      <img
-                        src={char.image}
-                        alt={char.name}
-                        className="w-full h-full object-contain p-0.5"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                        }}
-                      />
-                    ) : null}
-                    <span className="absolute text-xs pointer-events-none">
+                    <img
+                      src={char.image}
+                      alt={char.name}
+                      className="w-full h-full object-contain p-0.5"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
+                    <span className="absolute text-xs pointer-events-none hidden">
                       {char.emoji}
                     </span>
                     {!isUnlocked && (

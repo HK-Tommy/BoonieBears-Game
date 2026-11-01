@@ -44,17 +44,15 @@ export const EvolutionGuideModal: React.FC<EvolutionGuideModalProps> = ({ isOpen
                 className="bg-white rounded-2xl p-2.5 sm:p-3 border border-amber-200/80 shadow-2xs flex items-center gap-2.5 hover:border-amber-400 transition-colors"
               >
                 <div className="w-12 h-12 shrink-0 flex items-center justify-center relative">
-                  {char.tier !== 6 ? (
-                    <img
-                      src={char.image}
-                      alt={char.name}
-                      className="w-full h-full object-contain filter drop-shadow-xs"
-                      onError={(e) => {
-                        e.currentTarget.style.display = 'none';
-                      }}
-                    />
-                  ) : null}
-                  <span className="text-2xl pointer-events-none drop-shadow-xs">
+                  <img
+                    src={char.image}
+                    alt={char.name}
+                    className="w-full h-full object-contain filter drop-shadow-xs"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                  <span className="text-2xl pointer-events-none drop-shadow-xs hidden">
                     {char.emoji}
                   </span>
                 </div>
